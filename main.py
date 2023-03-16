@@ -25,7 +25,7 @@ async def main(n=1):
 
     async with aiohttp.ClientSession() as session:
         for url in urls:
-            curr_for_a_day = {}
+            exchange_rate_for_a_date = {}
             async with session.get(url) as response:
                 result = await response.json()
                 
@@ -44,8 +44,8 @@ async def main(n=1):
                             'purchase': record['purchaseRate']
                         }
                    
-                    curr_for_a_day[result['date']] = curr
-            curr_list.append(curr_for_a_day)
+                    exchange_rate_for_a_date[result['date']] = curr
+            curr_list.append(exchange_rate_for_a_date)
         return curr_list
 
 
