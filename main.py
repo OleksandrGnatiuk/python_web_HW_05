@@ -13,8 +13,7 @@ def create_url(date):
     return f'https://api.privatbank.ua/p24api/exchange_rates?json&date={day}.{month}.{year}'
 
 
-
-async def main(n=1):
+async def main(n, lst_curr):
     if n > 10:
         n = 10
 
@@ -32,17 +31,11 @@ async def main(n=1):
                         result = await response.json()
                         curr = {}
                         for record in result['exchangeRate']:
-                            if record['currency'] == 'USD':
-                                curr['USD'] = {
+                            if record['currency'] in lst_curr:
+                                curr[record['currency']] = {
                                     'sale': record['saleRate'], 
                                     'purchase': record['purchaseRate']
                                 }
-                            elif record['currency'] == 'EUR':
-                                curr["EUR"] = {
-                                    'sale': record['saleRate'], 
-                                    'purchase': record['purchaseRate']
-                                }
-                        
                             exchange_rate_for_a_date[result['date']] = curr
                         curr_list.append(exchange_rate_for_a_date)
                     else:
@@ -56,11 +49,14 @@ async def main(n=1):
 if __name__ == "__main__":
     if platform.system() == 'Windows':
         asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
-
+    lst_curr = ['USD', 'EUR']
     try:
         n = int(sys.argv[1])
+        if len(sys.argv) > 2:
+            # якщо введено додаткові валюти, то добавляємо їх до спистку валют за замовчуванням
+            lst_curr += sys.argv[2:]
     except IndexError:
         n = 1
-        print('If you want to get exchage rate of currency for two or more days, you need to write number of days')
-    r = asyncio.run(main(n))
+        print('If you want to get the exchange rate for two or more days, you need to write the number of days')
+    r = asyncio.run(main(n, set(lst_curr)))
     pprint(r)
