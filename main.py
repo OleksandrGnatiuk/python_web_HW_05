@@ -1,8 +1,10 @@
 import platform
+import json
 from datetime import datetime, timedelta
 import sys
-from pprint import pprint
+# from pprint import pprint
 import asyncio
+
 import aiohttp
 
 
@@ -13,7 +15,11 @@ def create_url(date):
     return f'https://api.privatbank.ua/p24api/exchange_rates?json&date={day}.{month}.{year}'
 
 
-async def main(n, lst_curr):
+async def get_exchange(n=None, lst=None):
+    lst_curr = ['USD', 'EUR']
+    # else:
+    #     lst_curr += lst
+
     if n > 10:
         n = 10
 
@@ -43,7 +49,8 @@ async def main(n, lst_curr):
             except aiohttp.ClientConnectionError as err:
                 print(f'Connection error: {url}', str(err))
 
-        return curr_list
+        exc = json.dumps(curr_list, ensure_ascii=False, indent=4)
+        return exc
 
 
 if __name__ == "__main__":
@@ -58,5 +65,5 @@ if __name__ == "__main__":
     except IndexError:
         n = 1
         print('If you want to get the exchange rate for two or more days, you need to write the number of days')
-    r = asyncio.run(main(n, set(lst_curr)))
-    pprint(r)
+    r = asyncio.run(get_exchange(5, set(lst_curr)))
+    print(r)
