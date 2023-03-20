@@ -24,7 +24,6 @@ async def request(url: str):
             print(f'Connection error: {url}', str(err))
 
 
-
 class Server:
     clients = set()
 

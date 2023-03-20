@@ -1,11 +1,9 @@
 import platform
-import json
 from datetime import datetime, timedelta
 import sys
-# from pprint import pprint
 import asyncio
-
 import aiohttp
+import json
 
 
 def create_url(date):
@@ -17,8 +15,8 @@ def create_url(date):
 
 async def get_exchange(n=None, lst=None):
     lst_curr = ['USD', 'EUR']
-    # else:
-    #     lst_curr += lst
+    if lst:
+        lst_curr += lst
 
     if n > 10:
         n = 10
@@ -64,6 +62,5 @@ if __name__ == "__main__":
             lst_curr += sys.argv[2:]
     except IndexError:
         n = 1
-        print('If you want to get the exchange rate for two or more days, you need to write the number of days')
-    r = asyncio.run(get_exchange(5, set(lst_curr)))
+    r = asyncio.run(get_exchange(n, lst_curr))
     print(r)
